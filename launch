@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if [ $# == 0 ]; then
+    echo "Usage: launch <filename>"
+    exit
+fi
+
+for i in "$@"; 
+do
+    extension="${i##*.}"
+
+    case $extension in
+        "pdf")
+            evince $i &
+            ;;
+        "txt" | "md")
+            subl $i
+            ;;
+        *)
+            gnome-open $i &
+            ;;
+    esac
+done

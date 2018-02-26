@@ -1,0 +1,23 @@
+#!/bin/bash
+
+LightGreen='\033[1;32m'
+LightRed='\033[1;31m'
+LightCyan='\033[1;36m'
+LightBlue='\033[1;34m'
+White='\033[0m'
+LightPurple='\033[1;35m'
+
+printf "${LightPurple}Updating snap packages...\n${LightCyan}"
+sudo snap refresh
+printf "${LightPurple}Updating FlatPak packages...\n${LightCyan}"
+flatpak update
+printf "${LightPurple}Updating apt packages...\n${LightCyan}"
+sudo apt update;
+sudo apt -y upgrade;
+sudo apt -y dist-upgrade;
+sudo apt -y autoremove;
+printf "${LightPurple}Updating pip packages...\n${LightCyan}"
+sudo -H pip install --upgrade pip
+sudo -H pip freeze > .pip.txt
+sudo -H pip install -q -r .pip.txt --upgrade
+rm .pip.txt
