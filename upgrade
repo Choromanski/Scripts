@@ -21,3 +21,5 @@ sudo -H pip install --upgrade pip
 sudo -H pip freeze > .pip.txt
 sudo -H pip install -q -r .pip.txt --upgrade
 rm .pip.txt
+printf "${LightPurple}Updating pip packages...\n${LightCyan}"
+sudo npm update -g
