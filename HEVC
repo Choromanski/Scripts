@@ -1,0 +1,8 @@
+#!/bin/bash         
+
+mkdir HEVC
+for i in *mkv; do 
+	ffmpeg -y -i "$i" -c:v libx265 -c:a copy -x265-params crf=25 HEVC/"${i%.mkv}-HEVC.mkv"; 
+	rm "$i";
+done
+
