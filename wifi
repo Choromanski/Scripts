@@ -1,0 +1,43 @@
+#!/bin/bash         
+
+if nmcli c | head -n2 | tail -n1 | grep --quiet "Eduroam"; then
+	nmcli c down id Wireless\ PittNet\ with\ Eduroam >/dev/null
+fi
+
+echo "Connecting to eduroam:"
+nmcli c up id Wireless\ PittNet\ with\ Eduroam &>/dev/null
+echo "Testing eduroam:"
+eduroam=$(speedtest-cli --csv --no-upload | cut -d',' -f8 -)
+eduroam=${eduroam%\.*}
+echo $eduroam
+
+echo "Connecting to Wireless-PittNet:"
+nmcli c up id Wireless\ PittNet &>/dev/null
+echo "Testing Wireless-PittNet:"
+pitt=$(speedtest-cli --csv --no-upload | cut -d',' -f8 -)
+pitt=${pitt%\.*}
+echo $pitt
+
+echo "Connecting to Wireless-PittNet-Fast:"
+nmcli c up id WIRELESS-PITTNET-FAST &>/dev/null
+echo "Testing Wireless-PittNet-Fast:"
+fast=$(speedtest-cli --csv --no-upload | cut -d',' -f8 -)
+fast=${fast%\.*}
+echo $fast
+
+if [[ "$fast" -gt "$eduroam" && "$fast" -gt "$pitt" ]]; then
+	echo "Fastest WiFi: Wireless-PittNet-Fast"
+elif [[ "$pitt" -gt "$eduroam" && "$pitt" -gt "$fast" ]]; then
+	echo "Fastest WiFi: Wireless-PittNet"
+	nmcli c up id Wireless\ PittNet &>/dev/null
+elif [[ "$eduroam" -gt "$fast" && "$eduroam" -gt "$pitt" ]]; then
+	echo "Fastest WiFi: eduroam"
+	nmcli c up id Wireless\ PittNet\ with\ Eduroam &>/dev/null
+else
+	echo "ERROR DETECTED"
+	echo "eduroam: $eduroam"
+	echo "Wireless-PittNet: $pitt"
+	echo "Wireless-PittNet-FastY $fast"
+fi
+
+speedtest-cli --simple
