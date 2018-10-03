@@ -17,7 +17,7 @@ do
             subl $i
             ;;
         *)
-            gnome-open $i &
+            xdg-open $i &
             ;;
     esac
 done
