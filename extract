@@ -1,0 +1,52 @@
+for file in "$@"
+do 
+	extension="${file##*.}"
+	filename="${file%.*}"
+	echo $file
+	echo $filename
+	echo $extension
+	mkdir "$filename"
+	cp $file $filename
+	cd $filename
+	case "$extension" in
+		"zip")
+			unzip $file
+			rm $file
+			cd ..
+			;;
+		"rar")
+			unrar x $file
+			rm $file
+			cd ..
+			;;
+		"7z")
+			7z x $file
+			rm $file
+			cd ..
+			;;
+		"tgz")
+             tar xvzf $file
+             ;;
+        "gz")
+			extension="${extension##.}"
+			if [ $extension == "tar" ]
+			then
+				tar xvzf $file
+			else
+				gunzip -d $file
+			fi
+			rm $file
+			cd ..
+			;;
+		"tar")
+			tar xf $file
+			rm $file
+			cd ..
+			;;
+		*)
+			echo "Compressed file not found"
+			cd ..
+			rm -rf $filename
+			;;
+	esac
+done
