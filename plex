@@ -1,0 +1,74 @@
+#!/bin/bash 
+
+if [ $# -eq 1 ]
+then
+    link=$1
+else
+    echo "Usage: plex [z] [download link]"
+    exit
+fi
+plex="/media/brian/My Passport/Plex/"
+temp="/home/brian-gnome/Downloads/Plex/"
+
+if [ -e "$plex" ]
+then
+    if [ -n "$(ls $temp"Movies")" ]
+    then
+        echo "Transferring Movies"
+        rsync -ruv --progress "$temp""Movies/"* "$plex""Movies"
+        rm -rf $temp"Movies/"*
+    fi
+    if [ -n "$(ls $temp"TV Shows")" ]
+    then
+        echo "Transferring TV Shows"
+        rsync -ruv --progress "$temp""TV Shows/"* "$plex""TV Shows"
+        rm -rf $temp"TV Shows/"*
+    fi
+else
+    plex="$temp"
+fi
+
+zip=${link%\/*}
+zip=${zip##*/}
+zip="$(echo $zip | head -c 3)"
+
+
+if [ "${link%\:*}" = "https" ]
+then
+    if [ "$zip" == "zip" ]
+	then
+	    file=${link##*/}
+	    file=${file%\?*}.zip
+	else
+	    file=${link##*/}
+	    file=${file%\?*}
+	    echo ${file%\.*}
+	fi
+
+#    cd "$plex"
+
+    wget -c -O $file $link
+else
+    file=$link
+#    mv "$file" "$plex"
+#    cd "$plex"
+fi
+
+if [ "$zip" == "zip"  ]
+then
+	echo "Zip"
+    DIR=$(zipinfo -1 "$file" | grep -oE '^[^/]+' | uniq)
+    unzip $file
+    cd "$DIR"
+    echo
+    pwd
+    echo
+    filebot -get-subtitles *
+    filebot -rename * --format "{plex}" --output "$plex" -non-strict
+#    cd $plex
+    cd ../
+    rm -rf "$DIR" $file
+else
+	filebot -get-subtitles "$file"
+    filebot -rename "${file%\.*}"* --format "{plex}" --output "$plex" -non-strict
+fi
