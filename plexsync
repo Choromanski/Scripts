@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if [ "$#" -gt 0 ]; then
+    if [ "$1" == "-f" ]; then
+        echo "Refreshing Metadata"
+        echo "TV Section Metadata"
+        curl "http://127.0.0.1:32400/library/sections/5/refresh?force=1&X-Plex-Token=pmctSQ9xusD6voGB1BHE"
+        echo "Movie Section Metadata"
+        curl "http://127.0.0.1:32400/library/sections/7/refresh?force=1&X-Plex-Token=pmctSQ9xusD6voGB1BHE"
+    fi
+    echo "$# $0 $1"
+else
+	echo "TV Section Scan"
+	curl "http://127.0.0.1:32400/library/sections/5/refresh?force=0&X-Plex-Token=pmctSQ9xusD6voGB1BHE"
+
+	echo "Movie Section Scan"
+	curl "http://127.0.0.1:32400/library/sections/7/refresh?force=0&X-Plex-Token=pmctSQ9xusD6voGB1BHE"
+fi

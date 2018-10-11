@@ -1,0 +1,29 @@
+#!/bin/bash 
+
+location=( "California" "Canada  " "France  " "Luxembourg" "Romania" )
+server=( "us-sf.vpnunlimitedapp.com" "ca-tr.vpnunlimitedapp.com" "fr.vpnunlimitedapp.com" "lu.vpnunlimitedapp.com" "ro.vpnunlimitedapp.com" )
+minPing=1000
+best=10
+
+echo "Speedtest:"
+echo
+for i in {0..4}
+do
+    ping=$(ping -c 1 -q -s 16 -w 1 -W 1 ${server[$i]} | awk -F'/' '/avg/{print $5}')
+    echo -e "${location[$i]} \t $ping ms"
+    ping=${ping%.*}
+    if [ "$ping" -lt "$minPing" ]
+    then
+        minPing=$ping
+        best=$i
+    fi
+done
+
+echo 
+
+echo "Fastest Server: $(echo -e "${location[$best]}" | tr -d '[:space:]') - $minPing ms"
+
+vpn="Torrent-"
+vpn="$vpn$(echo -e "${location[$best]}" | tr -d '[:space:]')"
+
+nmcli con up $vpn     

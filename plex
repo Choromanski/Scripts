@@ -72,3 +72,5 @@ else
 	filebot -get-subtitles "$file"
     filebot -rename "${file%\.*}"* --format "{plex}" --output "$plex" -non-strict
 fi
+
+plexsync
