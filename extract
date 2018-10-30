@@ -28,12 +28,25 @@ do
              tar xvzf $file
              ;;
         "gz")
-			extension="${extension##.}"
-			if [ $extension == "tar" ]
+			extension="${filename##*.}"
+			if [ $extension == "tar" ];
 			then
+				echo "tar"
 				tar xvzf $file
 			else
 				gunzip -d $file
+			fi
+			rm $file
+			cd ..
+			;;
+		"xz")
+			extension="${filename##*.}"
+			if [ "$extension" = "tar" ];
+			then
+				echo "tar"
+				tar -xf $file
+			else
+				unxz $file
 			fi
 			rm $file
 			cd ..
